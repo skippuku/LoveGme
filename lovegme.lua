@@ -1,12 +1,11 @@
 
 local ffi = require "ffi"
 
-local gme = ffi.load("libgme")
-
 ffi.cdef[[
 typedef const char* gme_err_t;
 typedef struct Music_Emu Music_Emu;
 gme_err_t gme_open_file( const char path [], Music_Emu** out, int sample_rate );
+gme_err_t gme_open_data( void const* data, long size, Music_Emu** out, int sample_rate );
 int gme_track_count( Music_Emu const* );
 
 gme_err_t gme_start_track( Music_Emu*, int index );
@@ -47,6 +46,8 @@ const char* gme_voice_name( Music_Emu const*, int i );
 void gme_mute_voice( Music_Emu*, int index, int mute );
 void gme_mute_voices( Music_Emu*, int muting_mask );
 ]]
+
+local gme = ffi.load("libgme")
 
 ffi.metatype("Music_Emu", {
 	__gc == function (emu)
@@ -98,7 +99,9 @@ function LoveGme.init(rate, buf, arg_count_buf)
 end
 
 function LoveGme.loadFile(fileName)
-	gme.gme_open_file(fileName, emu, sample_rate)
+	local fileData = love.filesystem.newFileData(fileName)
+	gme.gme_open_data(fileData:getPointer(), fileData:getSize(), emu, sample_rate)
+	--gme.gme_open_file(fileName, emu, sample_rate)
 	track_count = gme.gme_track_count( emu[0] )
 	voice_count = gme.gme_voice_count( emu[0] )
 	LoveGme.setTrack(0)

@@ -1,2 +1,4 @@
 *.nsf
+*.spc
+*.love
 main.lua
