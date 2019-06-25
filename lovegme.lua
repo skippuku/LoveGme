@@ -111,10 +111,6 @@ function LoveGme:setTrack(track)
 	gme.gme_start_track( self.emu[0], self.current_track )
 end
 
-function LoveGme.getSource()
-	return self.qs
-end
-
 function LoveGme:update()
 	while self.qs:getFreeBufferCount() > 0 do
 		local sd = love.sound.newSoundData(self.buf_size/2, self.sample_rate, 16, 2)
@@ -132,20 +128,6 @@ function LoveGme:enableAccuracy(bool)
 	gme.gme_enable_accuracy( self.emu[0], bool )
 end
 
-function LoveGme:getInfo(name)
-	if INFO_STR[name] then
-		return ffi.string( self.info[name] )
-	elseif INFO_INT[name] then
-		return tonumber( self.info[name] )
-	else
-		return "no info for " .. name
-	end
-end
-
-function LoveGme:getVoiceCount()
-	return self.voice_count
-end
-
 function LoveGme:getVoiceName(voice)
 	return ffi.string( gme.gme_voice_name( self.emu[0], voice ) )
 end
@@ -156,10 +138,6 @@ end
 
 function LoveGme:muteVoices(mask)
 	gme.gme_mute_voices( self.emu[0], mask )
-end
-
-function LoveGme:getTrackCount()
-	return self.track_count
 end
 
 function LoveGme:play()
