@@ -61,28 +61,11 @@ ffi.metatype("gme_info_t", {
 	end
 })
 
-local INFO_STR = {
-	system = true,
-	game = true,
-	song = true,
-	author = true,
-	copyright = true,
-	comment = true,
-	dumper = true
-}
-
-local INFO_INT = {
-	length = true,
-	intro_length = true,
-	loop_length = true,
-	play_length = true
-}
+local INFO_STR = { "system", "game", "song", "author", "copyright", "comment", "dumper" }
+local INFO_INT = { "length", "intro_length", "loop_length", "play_length" }
 
 local LoveGme = {}
 LoveGme.__index = LoveGme
---local sample_rate, buf_size, voice_count, track_count, current_track
---local emu, qs, out, info
---local playing
 
 local function new(rate, buf, arg_count_buf)
 	local new = setmetatable({}, LoveGme)
@@ -97,7 +80,8 @@ local function new(rate, buf, arg_count_buf)
 
 	new.qs = love.audio.newQueueableSource(new.sample_rate, 16, 2, arg_count_buf)
 	new.emu = ffi.new("Music_Emu*[1]")
-	new.info = ffi.new("gme_info_t*[1]")
+	new.ptr_info = ffi.new("gme_info_t*[1]")
+	new.info = {}
 
 	return new
 end
@@ -116,7 +100,14 @@ function LoveGme:setTrack(track)
 		error("no track "..track)
 	end
 	self.current_track = track
-	gme.gme_track_info( self.emu[0], self.info, track)
+	gme.gme_track_info( self.emu[0], self.ptr_info, track)
+	local c_info = self.ptr_info[0]
+	for _,name in ipairs(INFO_STR) do
+		self.info[name] = ffi.string(c_info[name])
+	end
+	for _,name in ipairs(INFO_INT) do
+		self.info[name] = tonumber(c_info[name])
+	end
 	gme.gme_start_track( self.emu[0], self.current_track )
 end
 
@@ -141,11 +132,11 @@ function LoveGme:enableAccuracy(bool)
 	gme.gme_enable_accuracy( self.emu[0], bool )
 end
 
-function LoveGme:info(name)
+function LoveGme:getInfo(name)
 	if INFO_STR[name] then
-		return ffi.string( self.info[0][name] )
+		return ffi.string( self.info[name] )
 	elseif INFO_INT[name] then
-		return tonumber( self.info[0][name] )
+		return tonumber( self.info[name] )
 	else
 		return "no info for " .. name
 	end
