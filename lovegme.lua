@@ -79,113 +79,116 @@ local INFO_INT = {
 }
 
 local LoveGme = {}
-local sample_rate, buf_size, voice_count, track_count, current_track
-local emu, qs, out, info
-local playing
+LoveGme.__index = LoveGme
+--local sample_rate, buf_size, voice_count, track_count, current_track
+--local emu, qs, out, info
+--local playing
 
-function LoveGme.init(rate, buf, arg_count_buf)
-	sample_rate = rate or 44100
-	buf_size = buf or 8192
+local function new(rate, buf, arg_count_buf)
+	local new = setmetatable({}, LoveGme)
+	new.sample_rate = rate or 44100
+	new.buf_size = buf or 8192
 
-	voice_count = 0
-	track_count = 0
-	current_track = 0
+	new.voice_count = 0
+	new.track_count = 0
+	new.current_track = 0
 
-	playing = false
+	new.playing = false
 
-	qs = love.audio.newQueueableSource(sample_rate, 16, 2, arg_count_buf)
-	emu = ffi.new("Music_Emu*[1]")
-	info = ffi.new("gme_info_t*[1]")
+	new.qs = love.audio.newQueueableSource(new.sample_rate, 16, 2, arg_count_buf)
+	new.emu = ffi.new("Music_Emu*[1]")
+	new.info = ffi.new("gme_info_t*[1]")
+
+	return new
 end
 
-function LoveGme.loadFile(fileName)
+function LoveGme:loadFile(fileName)
 	local fileData = love.filesystem.newFileData(fileName)
-	gme.gme_open_data(fileData:getPointer(), fileData:getSize(), emu, sample_rate)
-	--gme.gme_open_file(fileName, emu, sample_rate)
-	track_count = gme.gme_track_count( emu[0] )
-	voice_count = gme.gme_voice_count( emu[0] )
-	LoveGme.setTrack(0)
+	gme.gme_open_data(fileData:getPointer(), fileData:getSize(), self.emu, self.sample_rate)
+	self.track_count = gme.gme_track_count( self.emu[0] )
+	self.voice_count = gme.gme_voice_count( self.emu[0] )
+	self:setTrack(0)
 end
 
-function LoveGme.setTrack(track)
-	qs:stop()
-	if track_count==0 or track >= track_count then
+function LoveGme:setTrack(track)
+	self.qs:stop()
+	if self.track_count==0 or track >= self.track_count then
 		error("no track "..track)
 	end
-	current_track = track
-	gme.gme_track_info( emu[0], info, track)
-	gme.gme_start_track( emu[0], current_track )
+	self.current_track = track
+	gme.gme_track_info( self.emu[0], self.info, track)
+	gme.gme_start_track( self.emu[0], self.current_track )
 end
 
 function LoveGme.getSource()
-	return qs
+	return self.qs
 end
 
-function LoveGme.update()
-	while qs:getFreeBufferCount() > 0 do
-		local sd = love.sound.newSoundData(buf_size/2, sample_rate, 16, 2)
-		gme.gme_play( emu[0], buf_size, sd:getPointer())
-		qs:queue(sd)
-		if playing then qs:play() end
+function LoveGme:update()
+	while self.qs:getFreeBufferCount() > 0 do
+		local sd = love.sound.newSoundData(self.buf_size/2, self.sample_rate, 16, 2)
+		gme.gme_play( self.emu[0], self.buf_size, sd:getPointer())
+		self.qs:queue(sd)
+		if self.playing then self.qs:play() end
 	end
 end
 
-function LoveGme.setTempo(tempo)
-	gme.gme_set_tempo(emu[0], tempo)
+function LoveGme:setTempo(tempo)
+	gme.gme_set_tempo(self.emu[0], tempo)
 end
 
-function LoveGme.enableAccuracy(bool)
-	gme.gme_enable_accuracy( emu[0], bool )
+function LoveGme:enableAccuracy(bool)
+	gme.gme_enable_accuracy( self.emu[0], bool )
 end
 
-function LoveGme.info(name)
+function LoveGme:info(name)
 	if INFO_STR[name] then
-		return ffi.string( info[0][name] )
+		return ffi.string( self.info[0][name] )
 	elseif INFO_INT[name] then
-		return tonumber( info[0][name] )
+		return tonumber( self.info[0][name] )
 	else
 		return "no info for " .. name
 	end
 end
 
-function LoveGme.getVoiceCount()
-	return voice_count
+function LoveGme:getVoiceCount()
+	return self.voice_count
 end
 
-function LoveGme.getVoiceName(voice)
-	return ffi.string( gme.gme_voice_name( emu[0], voice ) )
+function LoveGme:getVoiceName(voice)
+	return ffi.string( gme.gme_voice_name( self.emu[0], voice ) )
 end
 
-function LoveGme.muteVoice(voice, bool)
-	gme.gme_mute_voice( emu[0], voice, bool)
+function LoveGme:muteVoice(voice, bool)
+	gme.gme_mute_voice( self.emu[0], voice, bool)
 end
 
-function LoveGme.muteVoices(mask)
-	gme.gme_mute_voices( emu[0], mask )
+function LoveGme:muteVoices(mask)
+	gme.gme_mute_voices( self.emu[0], mask )
 end
 
-function LoveGme.getTrackCount()
-	return track_count
+function LoveGme:getTrackCount()
+	return self.track_count
 end
 
-function LoveGme.play()
-	qs:play()
-	playing = true
+function LoveGme:play()
+	self.qs:play()
+	self.playing = true
 end
 
-function LoveGme.pause()
-	qs:pause()
-	playing = false
+function LoveGme:pause()
+	self.qs:pause()
+	self.playing = false
 end
 
-function LoveGme.stop()
-	qs:stop()
-	playing = false
+function LoveGme:stop()
+	self.qs:stop()
+	self.playing = false
 end
 
-function LoveGme.resume()
-	qs:resume()
-	playing = false
+function LoveGme:resume()
+	self.qs:resume()
+	self.playing = false
 end
 
-return LoveGme
+return setmetatable({}, {__call = function(_,...) return new(...) end})

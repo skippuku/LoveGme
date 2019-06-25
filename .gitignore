@@ -1,4 +1,5 @@
 *.nsf
 *.spc
+*.vgm
 *.love
 main.lua
