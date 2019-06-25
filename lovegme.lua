@@ -129,10 +129,12 @@ function LoveGme:enableAccuracy(bool)
 end
 
 function LoveGme:getVoiceName(voice)
+	self:voice_error_check(voice)
 	return ffi.string( gme.gme_voice_name( self.emu[0], voice ) )
 end
 
 function LoveGme:muteVoice(voice, bool)
+	self:voice_error_check(voice)
 	gme.gme_mute_voice( self.emu[0], voice, bool)
 end
 
@@ -158,6 +160,13 @@ end
 function LoveGme:resume()
 	self.qs:resume()
 	self.playing = false
+end
+
+function LoveGme:voice_error_check(voice)
+	if voice < 0 or voice > self.voice_count-1 then
+		error("attempt to use voice " .. voice ..
+		"\nthere are only voices 0 to " .. self.voice_count-1)
+	end
 end
 
 return setmetatable({}, {__call = function(_,...) return new(...) end})
