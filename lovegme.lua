@@ -111,6 +111,14 @@ function LoveGme:setTrack(track)
 	gme.gme_start_track( self.emu[0], self.current_track )
 end
 
+function LoveGme:renderTrackData(track, length)
+	self:setTrack(track)
+	local samples = (length)*self.sample_rate
+	local sd = love.sound.newSoundData(samples/2, self.sample_rate, 16, 2)
+	gme.gme_play( self.emu[0], samples, sd:getPointer())
+	return sd
+end
+
 function LoveGme:update()
 	while self.qs:getFreeBufferCount() > 0 do
 		local sd = love.sound.newSoundData(self.buf_size/2, self.sample_rate, 16, 2)
