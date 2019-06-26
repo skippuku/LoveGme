@@ -113,7 +113,7 @@ end
 
 function LoveGme:renderTrackData(track, length)
 	self:setTrack(track)
-	local samples = (length)*self.sample_rate
+	local samples = math.floor((length)*self.sample_rate/2)*2
 	local sd = love.sound.newSoundData(samples/2, self.sample_rate, 16, 2)
 	gme.gme_play( self.emu[0], samples, sd:getPointer())
 	return sd
