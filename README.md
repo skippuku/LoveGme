@@ -79,7 +79,7 @@ source:setFilter {
 ```Lua
 gme:setTempo(0.5) -- half tempo
 ```
-this does change the *speed* or pitch, but you can do that with
+this does not change the *speed* or pitch, but you can do that with
 ```Lua
 gme.qs:setPitch(0.5) -- half speed (and pitch)
 ```
