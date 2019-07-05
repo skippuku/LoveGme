@@ -165,11 +165,6 @@ function LoveGme:stop()
 	self.playing = false
 end
 
-function LoveGme:resume()
-	self.qs:resume()
-	self.playing = false
-end
-
 function LoveGme:voice_error_check(voice)
 	if voice < 0 or voice > self.voice_count-1 then
 		error("attempt to use voice " .. voice ..
