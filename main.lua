@@ -4,6 +4,7 @@ local gme
 
 local pause = false
 local currentPath = "no file"
+local report = ""
 
 function love.load(args)
 	gme = LoveGme()
@@ -13,6 +14,10 @@ end
 
 function love.update()
     gme:update()
+end
+
+function love.draw()
+	love.graphics.print(report, 10,10)
 end
 
 function love.keypressed(key)
@@ -56,4 +61,12 @@ function openFile(file)
 		currentPath = file:getFilename()
 	end
 	updateTitle()
+	genReport()
+end
+
+function genReport()
+	report = ""
+	for k, v in pairs(gme.info) do
+		report = report ..k..": "..v.."\n"
+	end
 end

@@ -4,7 +4,7 @@ Wrapper for Game Music Emu in Love using luajit's ffi.
 # Lmao what's a Emu
 ~~some kind of bird~~
 
-[Game Music Emu](https://bitbucket.org/mpyne/game-music-emu/wiki/Home) emulates old game system sound hardware so you can play songs made for the NES, SNES, Genesis, etc. So the advantages of this over just rendering to an ogg file of something is *really small* file sizes and tempo control and maybe if you have a song intro part separate from the loop you don't have to deal with renderinf two files and trying to get them to play together seamlessly. 
+[Game Music Emu](https://bitbucket.org/mpyne/game-music-emu/wiki/Home) emulates old game system sound hardware so you can play songs made for the NES, SNES, Genesis, etc. So the advantages of this over just rendering to an ogg file of something is *really small* file sizes and tempo control and maybe if you have a song intro part separate from the loop you don't have to deal with renderinf two files and trying to get them to play together seamlessly.
 
 Anyway, to use this you need to build the .dll or .so (make sure it's named libgme) and put that with the rest or the libraries love uses (SDL2.dll etc.)
 
@@ -22,9 +22,9 @@ end
 
 function love.update()
   gme:update() -- don't forget this!
-end 
+end
 ```
-If the file only has one track or you want to play the first track, then it is unnecessary to "set" the track as it is automatically set to the first one. 
+If the file only has one track or you want to play the first track, then it is unnecessary to "set" the track as it is automatically set to the first one.
 ### Info
 When a track is set, it's info is loaded into a table called `info`.
 
@@ -46,22 +46,22 @@ print( "the title bestowed upon the 3rd voice by Game Music Emu: " .. gme:getVoi
 ```
 Muting a voice:
 ```Lua
-gme.muteVoice(0, true)
+gme:muteVoice(0, true)
 ```
 Unmuting a voice:
 ```Lua
-gme.muteVoice(0, false)
+gme:muteVoice(0, false)
 ```
 Muting voices 2 and 5
 ```Lua
 local bit = require "bit"
-gme.muteVoices(bit.or( 2^1, 2^4 )) -- 0b01010
+gme:muteVoices(bit.or( 2^1, 2^4 )) -- 0b01010
 ```
 ### Sound Effects
 You can render out a part of a track to sound data for sound effects.
 ```Lua
 -- renders out 0.2 seconds of track 1
-local soundEffect = love.audio.newSource( gme.renderTrackData(0, 0.2) )
+local soundEffect = love.audio.newSource( gme:renderTrackData(0, 0.2) )
 ```
 ### Control
 An instance of LoveGme will have functions `play`, `pause`, `stop`, and `resume` which work like the similarly named functions of love audio sources.
@@ -75,7 +75,7 @@ source:setFilter {
 }
 ```
 ### Others
-`setTempo` can change the tempo. 
+`setTempo` can change the tempo.
 ```Lua
 gme:setTempo(0.5) -- half tempo
 ```
