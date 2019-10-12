@@ -50,7 +50,7 @@ void gme_mute_voices( Music_Emu*, int muting_mask );
 local gme = ffi.load("libgme")
 
 ffi.metatype("Music_Emu", {
-	__gc == function (emu)
+	__gc = function (emu)
 		gme.gme_delete(emu)
 	end
 })

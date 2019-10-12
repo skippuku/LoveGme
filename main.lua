@@ -4,12 +4,13 @@ local gme
 
 local pause = false
 local currentPath = "no file"
-local report = ""
+local report = "drag a supported file here to play it\nuse left and right keys to go through tracks\nuse p to pause"
 
 function love.load(args)
 	gme = LoveGme()
 	local path = args[1]
 	if path then openFile(love.filesystem.newFile(path)) end
+	updateTitle()
 end
 
 function love.update()
@@ -59,9 +60,9 @@ function openFile(file)
 		gme:loadFile(file)
 		gme:play()
 		currentPath = file:getFilename()
+		updateTitle()
+		genReport()
 	end
-	updateTitle()
-	genReport()
 end
 
 function genReport()
