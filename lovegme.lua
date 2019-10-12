@@ -77,6 +77,7 @@ local function new(rate, buf, arg_count_buf)
 	new.current_track = 0
 
 	new.playing = false
+	new.hasTrack =  false
 
 	new.qs = love.audio.newQueueableSource(new.sample_rate, 16, 2, arg_count_buf)
 	new.emu = ffi.new("Music_Emu*[1]")
@@ -109,6 +110,7 @@ function LoveGme:setTrack(track)
 		self.info[name] = tonumber(c_info[name])
 	end
 	gme.gme_start_track( self.emu[0], self.current_track )
+	self.hasTrack = true
 end
 
 function LoveGme:renderTrackData(track, length)
@@ -120,6 +122,7 @@ function LoveGme:renderTrackData(track, length)
 end
 
 function LoveGme:update()
+	if not self.hasTrack then return end
 	while self.qs:getFreeBufferCount() > 0 do
 		local sd = love.sound.newSoundData(self.buf_size/2, self.sample_rate, 16, 2)
 		gme.gme_play( self.emu[0], self.buf_size, sd:getPointer())
