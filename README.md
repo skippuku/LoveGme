@@ -66,9 +66,9 @@ local soundEffect = love.audio.newSource( gme:renderTrackData(0, 0.2) )
 ### Control
 An instance of LoveGme will have functions `play`, `pause`, `stop`, and `resume` which work like the similarly named functions of love audio sources.
 
-You can also get the queueableSource object from the instance which is stored in `qs`, so if you wanted to, say, apply a filter you can do so.
+You can also get the queueableSource object from the instance which is stored in `source`, so if you wanted to, say, apply a filter you can do so.
 ```Lua
-local source = gme.qs
+local source = gme.source
 source:setFilter {
 	type = "highpass",
     highgain = 0.2
@@ -81,7 +81,7 @@ gme:setTempo(0.5) -- half tempo
 ```
 this does not change the *speed* or pitch, but you can do that with
 ```Lua
-gme.qs:setPitch(0.5) -- half speed (and pitch)
+gme.source:setPitch(0.5) -- half speed (and pitch)
 ```
 There is also a function called `enableAccuracy` but i can't notice a difference when using it so i can't even guarantee that it works, but it works like muteVoice (pass a boolean).
 ### Advanced Techniques That You Are Only Allowed To Use If You Think You're Really Special

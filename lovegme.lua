@@ -79,7 +79,7 @@ local function new(rate, buf, arg_count_buf)
 	new.playing = false
 	new.hasTrack =  false
 
-	new.qs = love.audio.newQueueableSource(new.sample_rate, 16, 2, arg_count_buf)
+	new.source = love.audio.newQueueableSource(new.sample_rate, 16, 2, arg_count_buf)
 	new.emu = ffi.new("Music_Emu*[1]")
 	new.ptr_info = ffi.new("gme_info_t*[1]")
 	new.info = {}
@@ -104,7 +104,7 @@ function LoveGme:loadFile(fileName)
 end
 
 function LoveGme:setTrack(track)
-	self.qs:stop()
+	self.source:stop()
 	if self.track_count==0 or track >= self.track_count then
 		error("no track "..track)
 	end
@@ -131,11 +131,11 @@ end
 
 function LoveGme:update()
 	if not self.hasTrack then return end
-	while self.qs:getFreeBufferCount() > 0 do
+	while self.source:getFreeBufferCount() > 0 do
 		local sd = love.sound.newSoundData(self.buf_size/2, self.sample_rate, 16, 2)
 		gme.gme_play( self.emu[0], self.buf_size, sd:getPointer())
-		self.qs:queue(sd)
-		if self.playing then self.qs:play() end
+		self.source:queue(sd)
+		if self.playing then self.source:play() end
 	end
 end
 
@@ -162,17 +162,17 @@ function LoveGme:muteVoices(mask)
 end
 
 function LoveGme:play()
-	self.qs:play()
+	self.source:play()
 	self.playing = true
 end
 
 function LoveGme:pause()
-	self.qs:pause()
+	self.source:pause()
 	self.playing = false
 end
 
 function LoveGme:stop()
-	self.qs:stop()
+	self.source:stop()
 	self.playing = false
 end
 
