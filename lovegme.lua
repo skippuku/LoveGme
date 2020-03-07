@@ -67,6 +67,13 @@ local INFO_INT = { "length", "intro_length", "loop_length", "play_length" }
 local LoveGme = {}
 LoveGme.__index = LoveGme
 
+local function err_hand(result)
+	local err = ffi.new("gme_err_t", result)
+	if err ~= nil then -- not null pointer
+		error(ffi.string(err))
+	end 
+end 
+
 local function new(rate, buf, arg_count_buf)
 	local new = setmetatable({}, LoveGme)
 	new.sample_rate = rate or 44100
@@ -89,7 +96,7 @@ end
 
 function LoveGme:loadFile(fileName)
 	local fileData = love.filesystem.newFileData(fileName)
-	local err = ffi.new("const char*", gme.gme_open_data(
+	err_hand(gme.gme_open_data(
 		fileData:getFFIPointer(), 
 		fileData:getSize(), 
 		self.emu, 
@@ -109,7 +116,7 @@ function LoveGme:setTrack(track)
 		error("no track "..track)
 	end
 	self.current_track = track
-	gme.gme_track_info( self.emu[0], self.ptr_info, track)
+	err_hand( gme.gme_track_info( self.emu[0], self.ptr_info, track) )
 	local c_info = self.ptr_info[0]
 	for _,name in ipairs(INFO_STR) do
 		self.info[name] = ffi.string(c_info[name])
@@ -117,7 +124,7 @@ function LoveGme:setTrack(track)
 	for _,name in ipairs(INFO_INT) do
 		self.info[name] = tonumber(c_info[name])
 	end
-	gme.gme_start_track( self.emu[0], self.current_track )
+	err_hand( gme.gme_start_track( self.emu[0], self.current_track ) )
 	self.hasTrack = true
 end
 
@@ -125,7 +132,7 @@ function LoveGme:renderTrackData(track, length)
 	self:setTrack(track)
 	local samples = math.floor((length)*self.sample_rate/2)*2
 	local sd = love.sound.newSoundData(samples/2, self.sample_rate, 16, 2)
-	gme.gme_play( self.emu[0], samples, sd:getPointer())
+	err_hand( gme.gme_play( self.emu[0], samples, sd:getPointer()) )
 	return sd
 end
 
@@ -133,7 +140,7 @@ function LoveGme:update()
 	if not self.hasTrack then return end
 	while self.source:getFreeBufferCount() > 0 do
 		local sd = love.sound.newSoundData(self.buf_size/2, self.sample_rate, 16, 2)
-		gme.gme_play( self.emu[0], self.buf_size, sd:getPointer())
+		err_hand( gme.gme_play( self.emu[0], self.buf_size, sd:getPointer()) )
 		self.source:queue(sd)
 		if self.playing then self.source:play() end
 	end
