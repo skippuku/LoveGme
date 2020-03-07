@@ -52,7 +52,11 @@ function love.filedropped(file)
 end
 
 function updateTitle()
-	love.window.setTitle("LoveGme Player: "..currentPath.." track "..(gme.current_track+1).."/"..gme.track_count)
+	love.window.setTitle("LoveGme Player: "
+		..(currentPath:match("^.+/(.+)$") or "no file")
+		.." "..(gme.current_track+1)
+		.."/"..gme.track_count
+	)
 end
 
 function openFile(file)
