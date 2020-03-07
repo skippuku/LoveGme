@@ -89,7 +89,15 @@ end
 
 function LoveGme:loadFile(fileName)
 	local fileData = love.filesystem.newFileData(fileName)
-	gme.gme_open_data(fileData:getPointer(), fileData:getSize(), self.emu, self.sample_rate)
+	local err = ffi.new("const char*", gme.gme_open_data(
+		fileData:getFFIPointer(), 
+		fileData:getSize(), 
+		self.emu, 
+		self.sample_rate
+	))
+	if err ~= nil then
+		error(ffi.string(err))
+	end
 	self.track_count = gme.gme_track_count( self.emu[0] )
 	self.voice_count = gme.gme_voice_count( self.emu[0] )
 	self:setTrack(0)
