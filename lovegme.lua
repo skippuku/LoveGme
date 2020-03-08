@@ -77,7 +77,7 @@ end
 local function new(rate, buf, arg_count_buf)
 	local new = setmetatable({}, LoveGme)
 	new.sample_rate = rate or 44100
-	new.buf_size = buf or 8192
+	new.buf_size = buf or 1024
 
 	new.voice_count = 0
 	new.track_count = 0
@@ -102,9 +102,6 @@ function LoveGme:loadFile(fileName)
 		self.emu, 
 		self.sample_rate
 	))
-	if err ~= nil then
-		error(ffi.string(err))
-	end
 	self.track_count = gme.gme_track_count( self.emu[0] )
 	self.voice_count = gme.gme_voice_count( self.emu[0] )
 	self:setTrack(0)
