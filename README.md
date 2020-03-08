@@ -84,7 +84,7 @@ this does not change the *speed* or pitch, but you can do that with
 gme.source:setPitch(0.5) -- half speed (and pitch)
 ```
 There is also a function called `enableAccuracy` but i can't notice a difference when using it so i can't even guarantee that it works, but it works like muteVoice (pass a boolean).
-### Advanced Techniques That You Are Only Allowed To Use If You Think You're Really Special
+### Sample rate and buffers
 When you create a LoveGme instance you can pass 3 numbers. Sample Rate, Buffer Size, and Buffer Count.
 The defaults for these are 44100, 8192, and *what ever love chooses(usually 8)* respectively. But, yeah you can use your own values when you create an instance.
 ```Lua
