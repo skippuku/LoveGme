@@ -4,7 +4,7 @@ Wrapper for Game Music Emu in Love using luajit's ffi.
 # Lmao what's a Emu
 ~~some kind of bird~~
 
-[Game Music Emu](https://bitbucket.org/mpyne/game-music-emu/wiki/Home) emulates old game system sound hardware so you can play songs made for the NES, SNES, Genesis, etc. So the advantages of this over just rendering to an ogg file of something is *really small* file sizes and tempo control and maybe if you have a song intro part separate from the loop you don't have to deal with renderinf two files and trying to get them to play together seamlessly.
+[Game Music Emu](https://bitbucket.org/mpyne/game-music-emu/wiki/Home) emulates old game systems' sound hardware so you can play songs made for the NES, SNES, Genesis, etc. The advantages of this over rendering to an ogg or something is *really small* file sizes, tempo control, and song structure (like an intro part that you don't want to loop). 
 
 Anyway, to use this you need to build the .dll or .so (make sure it's named libgme) and put that with the rest or the libraries love uses (SDL2.dll etc.)
 
