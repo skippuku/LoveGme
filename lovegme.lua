@@ -45,6 +45,8 @@ int gme_voice_count( Music_Emu const* );
 const char* gme_voice_name( Music_Emu const*, int i );
 void gme_mute_voice( Music_Emu*, int index, int mute );
 void gme_mute_voices( Music_Emu*, int muting_mask );
+
+void gme_delete( Music_Emu* );
 ]]
 
 local gme = ffi.load("libgme")
