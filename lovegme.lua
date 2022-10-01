@@ -13,6 +13,7 @@ gme_err_t gme_play( Music_Emu*, int count, short out [] );
 
 void gme_set_tempo( Music_Emu*, double tempo);
 void gme_enable_accuracy( Music_Emu*, int enabled);
+void gme_set_autoload_playback_limit( Music_Emu *, int do_autoload_limit );
 
 typedef struct gme_info_t
 {
@@ -106,6 +107,7 @@ function LoveGme:loadFile(fileName)
 	))
 	self.track_count = gme.gme_track_count( self.emu[0] )
 	self.voice_count = gme.gme_voice_count( self.emu[0] )
+  gme.gme_set_autoload_playback_limit( self.emu[0], 0 )
 	self:setTrack(0)
 end
 
